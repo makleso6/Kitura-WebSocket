@@ -71,7 +71,7 @@ extension KituraTest {
         var header = createFrameHeader(final: final, withOpcode: withOpcode, withMasking: withMasking,
                           payloadLength: withPayload.length, channel: channel)
 
-        buffer.write(buffer: &header)
+        buffer.writeBuffer(&header)
         var intMask: UInt32
 
         #if os(Linux)
@@ -85,13 +85,13 @@ extension KituraTest {
         #else
         UnsafeMutableRawPointer(mutating: mask).copyBytes(from: &intMask, count: mask.count)
         #endif
-        buffer.write(bytes: mask)
+        buffer.writeBytes(mask)
         let payloadBytes = withPayload.bytes.bindMemory(to: UInt8.self, capacity: withPayload.length)
 
         for i in 0 ..< withPayload.length {
             var bytes = [UInt8](repeating: 0, count: 1)
             bytes[0] = payloadBytes[i] ^ mask[i % 4]
-            buffer.write(bytes: bytes)
+            buffer.writeBytes(bytes)
         }
 
         do {
@@ -149,7 +149,7 @@ extension KituraTest {
         if withMasking {
             bytes[1] |= 0x80
         }
-        buffer.write(bytes: Array(bytes[0..<length]))
+        buffer.writeBytes(Array(bytes[0..<length]))
         return buffer
     }
 }
@@ -182,7 +182,7 @@ class WebSocketClientHandler: ChannelInboundHandler {
         self.expectation = expectation
     }
 
-    func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let buffer = self.unwrapInboundIn(data)
         decodeFrame(from: buffer)
     }
@@ -258,7 +258,7 @@ class WebSocketClientHandler: ChannelInboundHandler {
         return (length, numberOfBytesConsumed)
     }
 
-    public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
+    public func errorCaught(context: ChannelHandlerContext, error: Error) {
         print(error)
     }
 
