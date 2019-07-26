@@ -28,7 +28,7 @@ public class WebSocket {
     ///                     to connect the upgrade request with a specific `WebSocketService`
     ///                     Caps-insensitive.
     public static func register(service: WebSocketService, onPath path: String) {
-        factory.register(service: service, onPath: path.lowercased())
+        factory.register(service: service, onPath: path)
     }
     
     /// Unregister a `WebSocketService` for a specific path
@@ -36,6 +36,6 @@ public class WebSocket {
     /// - Parameter path: The path on which the `WebSocketService` being unregistered,
     ///                  was registered on.
     public static func unregister(path: String) {
-        factory.unregister(path: path.lowercased())
+        factory.unregister(path: path)
     }
 }
